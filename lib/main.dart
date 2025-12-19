@@ -73,7 +73,7 @@ class _PainSliderWidgetState extends State<_PainSliderWidget> {
   Widget build(BuildContext context) {
     return Card(
       elevation: 0,
-      color: Colors.red.withOpacity(0.05),
+      color: Colors.red.withValues(alpha: 0.05),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -236,8 +236,11 @@ final _diagnosisCardSchema = S.object(
 
 extension type _DiagnosisCardData.fromMap(Map<String, Object?> _json) {
   JsonMap get diagnosisName => _json['diagnosisName'] as JsonMap;
+
   JsonMap get description => _json['description'] as JsonMap;
+
   JsonMap get severity => _json['severity'] as JsonMap;
+
   JsonMap get department => _json['department'] as JsonMap;
 }
 
@@ -415,6 +418,7 @@ extension type _MedicationListData.fromMap(Map<String, Object?> _json) {
 
 extension type _MedicationItemData.fromMap(Map<String, Object?> _json) {
   JsonMap get name => _json['name'] as JsonMap;
+
   JsonMap get dosage => _json['dosage'] as JsonMap;
 }
 
@@ -587,13 +591,13 @@ class _ChatScreenState extends State<ChatScreen> {
   final List<MessageController> _messages = [];
 
   late final GenUiConversation _genUiConversation;
-  late final GenUiManager _genUiManager;
+  late final A2uiMessageProcessor _genUiManager;
 
   @override
   void initState() {
     super.initState();
 
-    _genUiManager = GenUiManager(catalog: medicalCatalog);
+    _genUiManager = A2uiMessageProcessor(catalogs: [medicalCatalog]);
 
     final contentGenerator = GoogleGenerativeAiContentGenerator(
       apiKey: _apiKey,
@@ -644,7 +648,6 @@ class _ChatScreenState extends State<ChatScreen> {
     );
 
     _genUiConversation = GenUiConversation(
-      genUiManager: _genUiManager,
       contentGenerator: contentGenerator,
       onSurfaceAdded: _handleSurfaceAdded,
       onTextResponse: _onTextResponse,
@@ -653,6 +656,7 @@ class _ChatScreenState extends State<ChatScreen> {
           context,
         ).showSnackBar(SnackBar(content: Text('에러 발생: ${error.error}')));
       },
+      a2uiMessageProcessor: _genUiManager,
     );
   }
 
