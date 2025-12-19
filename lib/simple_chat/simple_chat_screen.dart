@@ -20,14 +20,14 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _textController = TextEditingController();
   final List<MessageController> _messages = [];
   late final GenUiConversation _genUiConversation;
-  late final GenUiManager _genUiManager;
+  late final A2uiMessageProcessor _genUiManager;
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     final Catalog catalog = CoreCatalogItems.asCatalog();
-    _genUiManager = GenUiManager(catalog: catalog);
+    _genUiManager = A2uiMessageProcessor(catalogs: [catalog]);
 
     final systemInstruction =
         '''You are a helpful assistant who chats with a user,
@@ -65,7 +65,7 @@ ${GenUiPromptFragments.basicChat}''';
         );
 
     _genUiConversation = GenUiConversation(
-      genUiManager: _genUiManager,
+      a2uiMessageProcessor: _genUiManager,
       contentGenerator: contentGenerator,
       onSurfaceAdded: _handleSurfaceAdded,
       onTextResponse: _onTextResponse,
