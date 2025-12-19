@@ -72,7 +72,7 @@ class AiWaiterApp extends StatefulWidget {
 }
 
 class _AiWaiterAppState extends State<AiWaiterApp> {
-  late final GenUiManager _manager;
+  late final A2uiMessageProcessor _manager;
   late final GenUiConversation _conversation;
   final TextEditingController _textController = TextEditingController();
 
@@ -84,14 +84,16 @@ class _AiWaiterAppState extends State<AiWaiterApp> {
     super.initState();
 
     // 2-1. 매니저 생성: 기본 위젯들 + 우리가 만든 FoodCard 등록
-    _manager = GenUiManager(
-      catalog: CoreCatalogItems.asCatalog().copyWith([foodCardItem]),
+    _manager = A2uiMessageProcessor(
+      catalogs: [
+        CoreCatalogItems.asCatalog().copyWith([foodCardItem]),
+      ],
     );
 
     // 2-2. AI 생성기 연결 (Gemini)
     final contentGenerator = GoogleGenerativeAiContentGenerator(
       apiKey: getApiKey(),
-      modelName: 'models/gemini-2.5-flash',
+      modelName: 'models/gemini-3-flash-preview',
       // 2-3. AI에게 역할 부여 (중요!)
       systemInstruction: '''
         당신은 친절한 AI 웨이터입니다.
@@ -102,12 +104,12 @@ class _AiWaiterAppState extends State<AiWaiterApp> {
       additionalTools: [
         // _manager.getTools(), // AI가 위젯을 만들 수 있게 도구 쥐어주기
       ],
-      catalog: _manager.catalog,
+      catalog: _manager.catalogs.first,
     );
 
     // 2-4. 대화 관리자 생성
     _conversation = GenUiConversation(
-      genUiManager: _manager,
+      a2uiMessageProcessor: _manager,
       contentGenerator: contentGenerator,
       // 화면이 추가될 때마다 호출되는 콜백
       onSurfaceAdded: (update) {
